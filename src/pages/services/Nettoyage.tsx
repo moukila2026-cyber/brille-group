@@ -11,7 +11,7 @@ import { ServiceAside, ServiceHero } from './shared'
 export const SOLUTIONS_NETTOYAGE = [
   {
     title: 'Nettoyage et désinfection de fauteuils',
-    text: ' détachage en profondeur, assainissement et remise en éclat des salons, canapés et sièges professionnels.',
+    text: 'Détachage en profondeur, assainissement et remise en éclat des salons, canapés et sièges professionnels.',
     icon: 'sparkles',
   },
   {
