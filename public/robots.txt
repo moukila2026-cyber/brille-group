@@ -1,0 +1,7 @@
+# BRILLE GROUP SARL — robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://www.brillegroup.com/sitemap.xml

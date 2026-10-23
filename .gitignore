@@ -1,0 +1,27 @@
+node_modules
+dist
+dist-ssr
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+.vercel
+.arena
+tmp
+coverage
+pgdata
+
+# Outils locaux / navigateurs de test
+.cache
+playwright-report
+test-results
+*.png.tmp
+
+# Caches npm locaux
+.npm
+
+# Fichiers de build TypeScript et divers
+*.tsbuildinfo
+.sudo_as_admin_successful
+uploads/
