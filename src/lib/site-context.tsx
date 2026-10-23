@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { api } from './api'
+import { DEFAULT_SITE_DATA } from './default-site-data'
 import type { PublicSiteData, ServiceDTO, SiteSettings } from './types'
 
 interface SiteContextValue {
@@ -16,7 +17,7 @@ interface SiteContextValue {
 const SiteContext = createContext<SiteContextValue | null>(null)
 
 export function SiteProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<PublicSiteData | null>(null)
+  const [data, setData] = useState<PublicSiteData>(DEFAULT_SITE_DATA)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
@@ -38,11 +39,18 @@ export function SiteProvider({ children }: { children: ReactNode }) {
       return 'Le contenu du site n’a pas pu être actualisé.'
     }
 
-    /** Deux tentatives : la première requête réveille parfois une base en veille. */
+    /** Deux tentatives : la première requête réveille parfois une base Neon en veille. */
     const charger = async (tentative: number): Promise<void> => {
       try {
         const result = await api.get<PublicSiteData>('/api/public/site', controller.signal)
-        if (!controller.signal.aborted) setData(result)
+        if (!controller.signal.aborted) {
+          setData({
+            settings: { ...DEFAULT_SITE_DATA.settings, ...result.settings },
+            services: result.services.length > 0 ? result.services : DEFAULT_SITE_DATA.services,
+            capabilities: result.capabilities,
+          })
+          setLoading(false)
+        }
       } catch (err) {
         if (controller.signal.aborted) return
         if (tentative < 2) {
@@ -52,8 +60,7 @@ export function SiteProvider({ children }: { children: ReactNode }) {
           return
         }
         setError(messageLisible(err))
-      } finally {
-        if (tentative >= 2 && !controller.signal.aborted) setLoading(false)
+        setLoading(false)
       }
     }
 
@@ -62,20 +69,15 @@ export function SiteProvider({ children }: { children: ReactNode }) {
   }, [tick])
 
   const value = useMemo<SiteContextValue>(() => {
-    const services = data?.services ?? []
+    const services = data.services
     return {
       loading,
       error,
-      settings: data?.settings ?? {},
+      settings: data.settings,
       services,
       coreServices: services.filter((service) => service.isCore),
       complementaryServices: services.filter((service) => !service.isCore),
-      capabilities: data?.capabilities ?? {
-        hasProperties: false,
-        hasProjects: false,
-        hasCourses: false,
-        whatsappConfigured: false,
-      },
+      capabilities: data.capabilities,
       reload,
     }
   }, [data, loading, error, reload])

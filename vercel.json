@@ -14,6 +14,10 @@
   },
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "/api/index?__bg_path=/api/$1"
+    },
+    {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
     }

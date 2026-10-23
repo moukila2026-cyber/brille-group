@@ -9,8 +9,14 @@ import path from 'node:path'
 import { getPool } from '../server/db'
 import { env } from '../server/env'
 
+const optionalEnv = process.argv.includes('--if-env')
+
 async function main() {
   if (!env.hasDatabase()) {
+    if (optionalEnv) {
+      console.log('[migrate] DATABASE_URL absent — migration automatique ignorée.')
+      return
+    }
     console.error('✗ DATABASE_URL manquant. Renseignez le fichier .env (voir .env.example).')
     process.exit(1)
   }

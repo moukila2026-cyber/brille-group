@@ -9,11 +9,16 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import React from 'react'
+import { renderToString } from 'react-dom/server'
+import { StaticRouter } from 'react-router-dom/server'
 // Charge .env en local (sur Vercel, les variables sont déjà dans l'environnement).
 import '../server/env'
 import { connectionNeedsSsl } from '../server/db'
+import App from '../src/App'
+import { SiteProvider } from '../src/lib/site-context'
 
-const SITE_URL = (process.env.SITE_URL || 'https://www.brillegroup.com').replace(/\/$/, '')
+const SITE_URL = (process.env.SITE_URL || 'https://brille-group.vercel.app').replace(/\/$/, '')
 const distDir = path.resolve(process.cwd(), 'dist')
 
 type Route = { path: string; title: string; description: string; priority: string; changefreq: string }
@@ -135,7 +140,7 @@ function escapeHtml(value: string): string {
   return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
-function buildHtml(template: string, route: Route): string {
+function buildHtml(template: string, route: Route, renderedBody = ''): string {
   const url = `${SITE_URL}${route.path === '/' ? '/' : route.path}`
   const title = escapeHtml(route.title)
   const description = escapeHtml(route.description)
@@ -153,6 +158,11 @@ function buildHtml(template: string, route: Route): string {
   )
   html = replaceTag(html, /<link\s+rel="canonical"[\s\S]*?>/, `<link rel="canonical" href="${url}" />`)
   html = replaceTag(html, /<meta\s+property="og:url"[\s\S]*?>/, `<meta property="og:url" content="${url}" />`)
+  html = replaceTag(
+    html,
+    /<meta\s+property="og:image"[\s\S]*?>/,
+    `<meta property="og:image" content="${SITE_URL}/images/og-image.jpg" />`,
+  )
   html = replaceTag(html, /<meta\s+property="og:title"[\s\S]*?>/, `<meta property="og:title" content="${title}" />`)
   html = replaceTag(
     html,
@@ -169,7 +179,20 @@ function buildHtml(template: string, route: Route): string {
     /<meta\s+name="twitter:description"[\s\S]*?>/,
     `<meta name="twitter:description" content="${description}" />`,
   )
+  if (renderedBody) {
+    html = html.replace('<div id="root"></div>', () => `<div id="root">${renderedBody}</div>`)
+  }
   return html
+}
+
+function renderRouteBody(routePath: string): string {
+  return renderToString(
+    React.createElement(
+      SiteProvider,
+      null,
+      React.createElement(StaticRouter, { location: routePath }, React.createElement(App)),
+    ),
+  )
 }
 
 interface PropertyRow {
@@ -211,29 +234,6 @@ async function fetchProperties(): Promise<PropertyRow[]> {
   }
 }
 
-async function fetchDynamicRoutes(): Promise<Route[]> {
-  if (!process.env.DATABASE_URL) return []
-  try {
-    const { Pool } = await import('pg')
-    const url = process.env.DATABASE_URL
-    const pool = new Pool({ connectionString: url, ...(connectionNeedsSsl(url) ? { ssl: { rejectUnauthorized: false } } : {}) })
-    const properties = await pool.query<{ id: string; title: string; reference: string; location: string }>(
-      `SELECT id, title, reference, location FROM properties WHERE is_published = true ORDER BY created_at DESC LIMIT 500`,
-    )
-    await pool.end()
-    return properties.rows.map((row) => ({
-      path: `/immobilier/${row.id}`,
-      title: `${row.title} — ${row.reference} | BRILLE GROUP SARL`,
-      description: `${row.title}${row.location ? ` à ${row.location}` : ''} — annonce ${row.reference} proposée par BRILLE GROUP SARL.`,
-      priority: '0.6',
-      changefreq: 'weekly',
-    }))
-  } catch (error) {
-    console.warn('[prerender] sitemap dynamique ignoré :', error instanceof Error ? error.message : error)
-    return []
-  }
-}
-
 async function main() {
   const templatePath = path.join(distDir, 'index.html')
   if (!fs.existsSync(templatePath)) {
@@ -243,7 +243,7 @@ async function main() {
   const template = fs.readFileSync(templatePath, 'utf8')
 
   for (const route of ROUTES) {
-    const html = buildHtml(template, route)
+    const html = buildHtml(template, route, renderRouteBody(route.path))
     if (route.path === '/') {
       fs.writeFileSync(templatePath, html)
       continue
@@ -271,7 +271,13 @@ async function main() {
     fs.writeFileSync(path.join(dir, 'index.html'), buildHtml(template, route))
   }
 
-  const dynamicRoutes = await fetchDynamicRoutes()
+  const dynamicRoutes: Route[] = properties.map((row) => ({
+    path: `/immobilier/${row.id}`,
+    title: `${row.title} — ${row.reference} | BRILLE GROUP SARL`,
+    description: `${row.title}${row.location ? ` à ${row.location}` : ''} — annonce ${row.reference} proposée par BRILLE GROUP SARL.`,
+    priority: '0.6',
+    changefreq: 'weekly',
+  }))
   const allRoutes = [...ROUTES, ...dynamicRoutes]
   const today = new Date().toISOString().slice(0, 10)
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
@@ -289,6 +295,15 @@ ${allRoutes
 </urlset>
 `
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), sitemap)
+  const robots = `# BRILLE GROUP SARL — robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: ${SITE_URL}/sitemap.xml
+`
+  fs.writeFileSync(path.join(distDir, 'robots.txt'), robots)
   console.log(
     `[prerender] ${ROUTES.length + properties.length} pages HTML + sitemap (${allRoutes.length} URLs) générés.`,
   )

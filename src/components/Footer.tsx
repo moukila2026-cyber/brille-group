@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
+import { servicePath } from '../lib/default-site-data'
 import { useSite } from '../lib/site-context'
-import { telHref } from '../lib/format'
+import { telHref, whatsappHref } from '../lib/format'
 
 /** Créateur du site — bouton WhatsApp cliquable. */
 const SHOPIN_WHATSAPP = '2250501303343'
@@ -11,15 +12,21 @@ function whatsappCreatorHref(message: string) {
 }
 
 export function Footer() {
-  const { coreServices, settings } = useSite()
+  const { coreServices, settings, capabilities } = useSite()
   const year = new Date().getFullYear()
 
   const company = String(settings.company_name ?? 'BRILLE GROUP SARL')
   const address = String(settings.address_line ?? '')
   const city = String(settings.city ?? '')
   const country = String(settings.country ?? '')
-  const phones = [settings.phone_primary, settings.phone_secondary, settings.phone_third].filter(
-    (value): value is string => typeof value === 'string' && value.trim() !== '',
+  const phoneEntries = [
+    { label: 'Bureau', value: settings.phone_primary },
+    { label: 'WhatsApp', value: settings.phone_secondary },
+    { label: 'Sercom', value: settings.phone_third },
+  ].filter((entry): entry is { label: string; value: string } => typeof entry.value === 'string' && entry.value.trim() !== '')
+  const wa = whatsappHref(
+    typeof settings.whatsapp_number === 'string' ? settings.whatsapp_number : '',
+    'Bonjour BRILLE GROUP, je souhaite des informations.',
   )
   const email = String(settings.email_primary ?? '')
   const facebook = String(settings.facebook_url ?? '')
@@ -62,7 +69,7 @@ export function Footer() {
             {coreServices.slice(0, 6).map((service) => (
               <li key={service.id}>
                 <Link
-                  to={`/services/${service.slug}`}
+                  to={servicePath(service.slug)}
                   className="text-navy-300 transition hover:text-white"
                 >
                   {service.title}
@@ -115,19 +122,39 @@ export function Footer() {
                 </span>
               </li>
             )}
-            {phones.map((phone) => (
-              <li key={phone}>
-                <a
-                  href={telHref(phone)}
-                  className="flex items-center gap-2.5 text-navy-300 transition hover:text-white"
-                >
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-azure-300">
-                    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                      <path d="M5 4h3l2 5-2 1a12 12 0 006 6l1-2 5 2v3a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </span>
-                  {phone}
-                </a>
+            {phoneEntries.map((entry) => (
+              <li key={entry.value}>
+                {entry.label === 'WhatsApp' && wa && capabilities.whatsappConfigured ? (
+                  <a
+                    href={wa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 text-emerald-300 transition hover:text-emerald-200"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
+                      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                        <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38c1.45.79 3.08 1.21 4.79 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2z" />
+                      </svg>
+                    </span>
+                    <span>
+                      {entry.label} : {entry.value}
+                    </span>
+                  </a>
+                ) : (
+                  <a
+                    href={telHref(entry.value)}
+                    className="flex items-center gap-2.5 text-navy-300 transition hover:text-white"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/5 text-azure-300">
+                      <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                        <path d="M5 4h3l2 5-2 1a12 12 0 006 6l1-2 5 2v3a2 2 0 01-2 2A16 16 0 013 6a2 2 0 012-2z" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </span>
+                    <span>
+                      {entry.label} : {entry.value}
+                    </span>
+                  </a>
+                )}
               </li>
             ))}
             {email ? (

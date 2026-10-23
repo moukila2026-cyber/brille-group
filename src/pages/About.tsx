@@ -3,6 +3,7 @@ import { Seo } from '../components/Seo'
 import { Icon } from '../components/Icon'
 import { PageHero, Section, SectionHeading, Badge, Alert } from '../components/ui'
 import { useSite } from '../lib/site-context'
+import { servicePath } from '../lib/default-site-data'
 import { telHref } from '../lib/format'
 
 export default function About() {
@@ -179,7 +180,7 @@ export default function About() {
           {coreServices.map((service) => (
             <Link
               key={service.id}
-              to={`/services/${service.slug}`}
+              to={servicePath(service.slug)}
               className="group flex items-center justify-between gap-4 rounded-xl border border-navy-100 bg-white p-4 transition hover:border-navy-200 hover:shadow-card"
             >
               <span className="flex items-center gap-3">

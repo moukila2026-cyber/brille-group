@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx server/dev.ts",
     "setup": "tsx scripts/setup.ts",
-    "build": "tsc -b tsconfig.build.json && vite build && tsx scripts/prerender.ts",
+    "build": "tsx scripts/migrate.ts --if-env && tsc -b tsconfig.build.json && vite build && tsx scripts/prerender.ts",
     "preview": "vite preview --host 0.0.0.0",
     "typecheck": "tsc -b tsconfig.build.json",
     "db:migrate": "tsx scripts/migrate.ts",
