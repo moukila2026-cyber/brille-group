@@ -75,6 +75,7 @@ export function ImmobilierList() {
         path="/immobilier"
       />
       <PageHero
+        logo
         eyebrow="Immobilier & terrains"
         title="Terrains et biens disponibles"
         description="Les annonces publiées ici sont celles transmises par l’entreprise. Chaque fiche précise, lorsqu’elle est disponible, la localisation, la superficie, le prix et le statut de disponibilité."

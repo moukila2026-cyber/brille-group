@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
-import { Logo } from './Logo'
+import { Logo, LogoMark } from './Logo'
 import { useSite } from '../lib/site-context'
 import { telHref, cn } from '../lib/format'
 
@@ -72,7 +72,8 @@ export function Header() {
       </a>
 
       {/* Bandeau de contact (masqué sur petit mobile pour rester sobre) */}
-      <div className="hidden bg-navy-950 text-navy-200 sm:block">
+      <div className="relative hidden bg-navy-950 text-navy-200 sm:block">
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-brandred via-white/50 to-azure-500" aria-hidden="true" />
         <div className="container-page flex h-10 items-center justify-between text-xs">
           <p className="flex items-center gap-2">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden="true" />
@@ -95,7 +96,19 @@ export function Header() {
 
       <header className="sticky top-0 z-40 border-b border-navy-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/85">
         <div className="container-page flex h-[68px] items-center justify-between gap-4">
-          <Logo />
+          {/* Logo complet sur grand écran, marque + nom sur mobile (toujours lisible) */}
+          <Logo className="hidden sm:flex" />
+          <Link to="/" className="flex items-center gap-2 sm:hidden" aria-label="BRILLE GROUP SARL — Accueil">
+            <LogoMark className="h-9 w-9" />
+            <span className="leading-none">
+              <span className="block font-display text-[15px] font-extrabold tracking-tight text-navy-900">
+                BRILLE GROUP
+              </span>
+              <span className="mt-0.5 block text-[9px] font-semibold uppercase tracking-[0.24em] text-azure-600">
+                SARL · Let’s shine
+              </span>
+            </span>
+          </Link>
 
           <nav aria-label="Navigation principale" className="hidden items-center gap-0.5 lg:flex">
             {NAV.map((item) =>
@@ -151,8 +164,12 @@ export function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link to="/devis" className="btn-primary hidden !px-5 !py-2.5 text-[13px] sm:inline-flex">
+            <Link
+              to="/devis"
+              className="hidden items-center gap-1.5 rounded-full bg-gradient-to-r from-brandred to-azure-600 px-5 py-2.5 text-[13px] font-semibold text-white shadow-md shadow-brandred/25 transition hover:brightness-110 sm:inline-flex"
+            >
               Demander un devis
+              <span aria-hidden="true">→</span>
             </Link>
             <button
               type="button"

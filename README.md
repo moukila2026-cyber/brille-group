@@ -233,3 +233,8 @@ Format recommandé : JPEG progressif, 1376 × 768 px, moins de 300 Ko.
 Code et contenus fournis à BRILLE GROUP SARL pour son usage propre. Les coordonnées, demandes
 et messages enregistrés en base sont des données personnelles : voir la page
 `/politique-confidentialite` du site.
+
+## Mise en ligne
+
+Le guide pas à pas adapté à Windows (Git à installer, jeton GitHub, variables Vercel, vérifications) :
+**`docs/09-MISE-EN-LIGNE-WINDOWS.md`**.

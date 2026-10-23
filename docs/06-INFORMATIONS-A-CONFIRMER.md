@@ -100,3 +100,35 @@ Pour **chaque** service, confirmer ce qui est réellement réalisé :
 | Comptes des personnes habilitées | `Administration → Utilisateurs` |
 
 Aucune modification de code n'est nécessaire pour ces contenus.
+
+---
+
+## Logo et identité visuelle
+
+Le logo fourni (`Logo-BRILLE-GROUP.jpg`) était **rogné à droite** : le mot « GROUP » y est
+incomplet. Il a donc été **reconstruit en vectoriel** (SVG) à partir des éléments visibles :
+arche rouge et bleue, bandeau blanc « BRILLE GROUP », bandeau bleu « Let’s shine together ».
+
+| Élément | Où | Couleurs |
+|---|---|---|
+| Logo complet | en-tête (à partir de 640 px), pied de page, héros de l’accueil | rouge `#EE1F3A`, bleu `#1E90DE` |
+| Monogramme « BG » | en-tête mobile, favicon | idem |
+
+**À demander à l’entreprise** : le fichier logo d’origine **complet**, de préférence en `.svg`,
+`.ai`, `.eps` ou `.pdf` vectoriel (sinon un PNG sur fond transparent, largeur ≥ 1200 px).
+Dès réception, il suffit de remplacer les tracés de `src/components/Logo.tsx` — aucune autre
+modification n’est nécessaire.
+
+> Le logo actuel est une **reconstitution fidèle mais non officielle**. Il ne doit pas être utilisé
+> sur des supports imprimés avant validation par l’entreprise.
+
+---
+
+## Crédit du site et contact du développeur
+
+Le pied de page comporte la mention « Site conçu et développé par **Shopin30** », cliquable vers
+`https://wa.me/2250501303343` (WhatsApp, message prérempli). Le numéro est centralisé en haut de
+`src/components/Footer.tsx` (`SHOPIN_WHATSAPP`) : une seule ligne à modifier pour le changer.
+
+Ce numéro est distinct de ceux de BRILLE GROUP et n’apparaît **que** dans ce crédit : il ne
+remplace pas les moyens de contact de l’entreprise.

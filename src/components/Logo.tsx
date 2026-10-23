@@ -2,31 +2,43 @@ import { Link } from 'react-router-dom'
 import { cn } from '../lib/format'
 
 /**
- * Identité visuelle provisoire, construite à partir des couleurs du document
- * officiel de l'entreprise (bleu et rouge).
- * → Remplacer par le fichier logo officiel via Administration > Paramètres.
+ * Identité visuelle BRILLE GROUP SARL.
+ *
+ * Le logo est reconstruit en vectoriel à partir du document officiel de
+ * l'entreprise : arche rouge et bleue, bandeau blanc « BRILLE GROUP » et
+ * bandeau bleu « Let's shine together ». Il reste net à toutes les tailles
+ * (en-tête, pied de page, favicon) et n'est jamais rogné.
+ *
+ * Couleurs de la charte, relevées sur le logo fourni :
+ *   rouge #EE1F3A · bleu #1E90DE · blanc
  */
-export function LogoMark({ className }: { className?: string }) {
+
+const RED = '#EE1F3A'
+const AZURE = '#1E90DE'
+
+type MarkProps = { className?: string; title?: string }
+
+/** Version carrée (favicon, puces, en-tête compact). */
+export function LogoMark({ className, title = 'BRILLE GROUP' }: MarkProps) {
   return (
-    <svg viewBox="0 0 48 48" role="img" aria-label="BRILLE GROUP" className={cn('h-11 w-11', className)}>
-      <defs>
-        <linearGradient id="bg-mark" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#16253d" />
-          <stop offset="100%" stopColor="#0d1a2d" />
-        </linearGradient>
-      </defs>
-      <rect width="48" height="48" rx="13" fill="url(#bg-mark)" />
-      <path d="M8 33c9-13 20-16 32-15" stroke="#c8102e" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-      <path d="M8 38c10-14 21-17 32-16" stroke="#d6a945" strokeWidth="2.2" fill="none" strokeLinecap="round" opacity=".95" />
+    <svg
+      viewBox="0 0 64 64"
+      role="img"
+      aria-label={title}
+      className={cn('h-11 w-11', className)}
+    >
+      <ellipse cx="32" cy="32" rx="29" ry="20" fill="none" stroke={RED} strokeWidth="4.6" />
+      <ellipse cx="32" cy="32" rx="23.5" ry="14.5" fill="none" stroke={AZURE} strokeWidth="4" />
+      <rect x="0.6" y="23" width="62.8" height="18" rx="9" fill="#fff" stroke={AZURE} strokeWidth="1.9" />
       <text
-        x="24"
-        y="24"
+        x="32"
+        y="36.6"
         textAnchor="middle"
-        dominantBaseline="middle"
         fontFamily="Segoe UI, system-ui, sans-serif"
-        fontSize="17"
-        fontWeight="700"
-        fill="#ffffff"
+        fontSize="14.5"
+        fontWeight="800"
+        letterSpacing="0.6"
+        fill={RED}
       >
         BG
       </text>
@@ -34,28 +46,97 @@ export function LogoMark({ className }: { className?: string }) {
   )
 }
 
-export function Logo({ light = false, compact = false }: { light?: boolean; compact?: boolean }) {
+/**
+ * Logo complet : arche, wordmark et signature.
+ * `variant="light"` s'utilise sur fond sombre (pied de page).
+ */
+export function LogoFull({
+  className,
+  variant = 'dark',
+  title = 'BRILLE GROUP SARL — Let’s shine together',
+}: MarkProps & { variant?: 'dark' | 'light' }) {
+  const wordFill = variant === 'light' ? '#fff' : RED
   return (
-    <Link to="/" className="group flex items-center gap-3" aria-label="BRILLE GROUP SARL — Accueil">
-      <LogoMark className={compact ? 'h-9 w-9' : 'h-11 w-11'} />
-      <span className="leading-tight">
-        <span
-          className={cn(
-            'block font-display text-[17px] font-bold tracking-tight sm:text-lg',
-            light ? 'text-white' : 'text-navy-900',
-          )}
-        >
-          BRILLE GROUP
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className={cn('block text-[10px] font-semibold uppercase tracking-[0.28em]', light ? 'text-gold-300' : 'text-gold-600')}>
-            SARL
-          </span>
-          <span className={cn('hidden text-[10px] italic sm:inline', light ? 'text-navy-200' : 'text-navy-400')}>
-            Let’s shine together
-          </span>
-        </span>
-      </span>
+    <svg
+      viewBox="0 0 460 240"
+      role="img"
+      aria-label={title}
+      className={className}
+    >
+      {/* Arche double : rouge à l'extérieur, bleu à l'intérieur */}
+      <path d="M 25 148 A 205 100 0 0 1 435 148" fill="none" stroke={RED} strokeWidth="15" strokeLinecap="round" />
+      <path d="M 47 144 A 183 82 0 0 1 413 144" fill="none" stroke={AZURE} strokeWidth="13" strokeLinecap="round" />
+      {/* Volutes basses, de part et d'autre du bandeau */}
+      <path d="M 25 148 A 205 100 0 0 0 64 211" fill="none" stroke={RED} strokeWidth="15" strokeLinecap="round" />
+      <path d="M 435 148 A 205 100 0 0 1 396 211" fill="none" stroke={RED} strokeWidth="15" strokeLinecap="round" />
+      <path d="M 47 144 A 183 82 0 0 0 80 203" fill="none" stroke={AZURE} strokeWidth="13" strokeLinecap="round" />
+      <path d="M 413 144 A 183 82 0 0 1 380 203" fill="none" stroke={AZURE} strokeWidth="13" strokeLinecap="round" />
+
+      {/* Bandeau du nom */}
+      <rect
+        x="1.6"
+        y="90"
+        width="456.8"
+        height="58"
+        rx="29"
+        fill={variant === 'light' ? '#0F2438' : '#fff'}
+        stroke={AZURE}
+        strokeWidth="2.8"
+      />
+      <text
+        x="230"
+        y="133.5"
+        textAnchor="middle"
+        fontFamily="Segoe UI, system-ui, sans-serif"
+        fontSize="46"
+        fontWeight="800"
+        letterSpacing="0.5"
+        fill={wordFill}
+      >
+        BRILLE GROUP
+      </text>
+
+      {/* Signature */}
+      <rect x="58" y="154" width="344" height="36" rx="18" fill={AZURE} />
+      <text
+        x="230"
+        y="178.5"
+        textAnchor="middle"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize="19"
+        fontStyle="italic"
+        fontWeight="600"
+        fill="#fff"
+      >
+        Let’s shine together
+      </text>
+    </svg>
+  )
+}
+
+/** Logo cliquable, version en-tête. */
+export function Logo({
+  light = false,
+  compact = false,
+  className,
+}: {
+  light?: boolean
+  compact?: boolean
+  className?: string
+}) {
+  return (
+    <Link
+      to="/"
+      aria-label="BRILLE GROUP SARL — Accueil"
+      className={cn('group inline-flex items-center gap-2.5 rounded-xl', className)}
+    >
+      <LogoFull
+        variant={light ? 'light' : 'dark'}
+        className={cn(
+          'transition-transform duration-300 group-hover:scale-[1.02]',
+          compact ? 'h-10 w-auto sm:h-11' : 'h-12 w-auto sm:h-16',
+        )}
+      />
     </Link>
   )
 }

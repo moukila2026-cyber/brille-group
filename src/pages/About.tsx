@@ -22,6 +22,7 @@ export default function About() {
         path="/a-propos"
       />
       <PageHero
+        logo
         eyebrow="L’entreprise"
         title="BRILLE GROUP SARL, un interlocuteur pour vos projets"
         description="Une entreprise ivoirienne qui réunit plusieurs métiers complémentaires au service des particuliers, des entreprises et des porteurs de projets."

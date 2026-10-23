@@ -19,6 +19,9 @@ const PATHS: Record<string, string> = {
   clock: 'M12 21a9 9 0 100-18 9 9 0 000 18zm0-13v5l3 2',
   arrow: 'M5 12h14M13 6l6 6-6 6',
   spark: 'M12 2l2.2 5.8L20 10l-5.8 2.2L12 18l-2.2-5.8L4 10l5.8-2.2L12 2z',
+  layers: 'M12 3l9 5-9 5-9-5 9-5zM3 12l9 5 9-5M3 16l9 5 9-5',
+  user: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c0-3.3 3.6-6 8-6s8 2.7 8 6',
+  file: 'M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5zM14 3v5h5M9 13h6M9 17h4',
 }
 
 export function Icon({ name, className }: { name: string; className?: string }) {

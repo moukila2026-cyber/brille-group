@@ -37,6 +37,7 @@ export default function Realisations() {
         path="/realisations"
       />
       <PageHero
+        logo
         eyebrow="Nos réalisations"
         title="Nos projets, documentés et validés"
         description="Cette galerie ne contient que des projets réellement réalisés par l’entreprise et autorisés à la publication. Aucune image d’illustration n’y est présentée comme un chantier livré."

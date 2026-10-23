@@ -51,6 +51,7 @@ export default function ServiceGeneric() {
         path={`/services/${service.slug}`}
       />
       <PageHero
+        logo
         eyebrow="Activité"
         title={service.title}
         description={service.shortDescription}

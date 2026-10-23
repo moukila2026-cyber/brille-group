@@ -95,7 +95,7 @@ export function clearCookie(name: string): string {
 export function clientIp(req: IncomingMessage): string {
   const header = req.headers['x-forwarded-for']
   const raw = Array.isArray(header) ? header[0] : header
-  const ip = (raw ?? '').split(',')[0]?.trim() || req.socket.remoteAddress || 'unknown'
+  const ip = (raw ?? '').split(',')[0]?.trim() || req.socket?.remoteAddress || 'unknown'
   return ip
 }
 

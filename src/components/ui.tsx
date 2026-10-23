@@ -51,7 +51,7 @@ export function SectionHeading({
       )}
     >
       {eyebrow ? (
-        <p className={cn('eyebrow', light && 'text-gold-300')}>
+        <p className={cn('eyebrow', light && 'text-azure-300')}>
           <span className="h-px w-6 bg-current" aria-hidden="true" />
           {eyebrow}
         </p>
@@ -196,16 +196,29 @@ export function PageHero({
   title,
   description,
   image,
+  logo = false,
   children,
 }: {
   eyebrow?: string
   title: string
   description?: string
   image?: string
+  /** Affiche le logo de l'entreprise au-dessus du titre. */
+  logo?: boolean
   children?: ReactNode
 }) {
   return (
-    <section className="relative overflow-hidden bg-navy-900 text-white">
+    <section className="relative overflow-hidden bg-navy-950 text-white">
+      <div className="absolute inset-0 bg-grid opacity-40" aria-hidden="true" />
+      <div
+        className="pointer-events-none absolute -right-24 -top-20 h-80 w-80 rounded-full bg-azure-500/25 blur-[100px]"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute -left-24 bottom-0 h-72 w-72 rounded-full bg-brandred/20 blur-[100px]"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brandred via-white/50 to-azure-500" aria-hidden="true" />
       {image ? (
         <img
           src={image}
@@ -220,7 +233,20 @@ export function PageHero({
         aria-hidden="true"
       />
       <div className="container-page relative py-16 sm:py-20 lg:py-24">
-        {eyebrow ? <p className="eyebrow text-gold-300">{eyebrow}</p> : null}
+        {logo ? (
+          <div className="mb-7 block">
+            <span className="inline-flex rounded-2xl bg-white px-5 py-3 shadow-xl shadow-black/30">
+              <img
+                src="/images/logo-brille-group.svg"
+                alt="BRILLE GROUP SARL"
+                className="h-12 w-auto sm:h-14"
+                width={460}
+                height={240}
+              />
+            </span>
+          </div>
+        ) : null}
+        {eyebrow ? <p className="eyebrow text-azure-300">{eyebrow}</p> : null}
         <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight text-white sm:text-4xl lg:text-5xl">
           {title}
         </h1>

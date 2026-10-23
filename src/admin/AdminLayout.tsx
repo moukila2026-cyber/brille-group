@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from './AuthContext'
-import { LogoMark } from '../components/Logo'
 import { cn } from '../lib/format'
 import { Icon } from '../components/Icon'
 
@@ -39,7 +38,15 @@ export default function AdminLayout() {
               <Icon name="arrow" className="h-5 w-5" />
             </button>
             <Link to="/admin" className="flex items-center gap-2.5">
-              <LogoMark className="h-9 w-9" />
+              <span className="inline-flex rounded-lg bg-white px-2 py-1">
+                <img
+                  src="/images/logo-brille-group.svg"
+                  alt="BRILLE GROUP SARL"
+                  className="h-8 w-auto"
+                  width={460}
+                  height={240}
+                />
+              </span>
               <span className="hidden sm:block">
                 <span className="block text-sm font-bold leading-tight text-navy-900">BRILLE GROUP</span>
                 <span className="block text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-600">

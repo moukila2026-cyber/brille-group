@@ -27,6 +27,7 @@ export default function Devis() {
         path="/devis"
       />
       <PageHero
+        logo
         eyebrow="Demande de devis"
         title="Décrivez votre projet, nous vous répondons"
         description="Ce formulaire nous permet de qualifier votre demande et de vous apporter une réponse utile. Aucun engagement, aucune inscription automatique."

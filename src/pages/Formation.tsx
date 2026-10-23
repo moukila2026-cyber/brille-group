@@ -20,6 +20,7 @@ export default function Formation() {
         path="/formation"
       />
       <PageHero
+        logo
         eyebrow="Conseils & formation"
         title="Transmettre les compétences, éclairer les décisions"
         description="BRILLE GROUP SARL propose du conseil aux porteurs de projets et des formations professionnelles. Les programmes détaillés sont publiés dans le catalogue lorsqu’ils sont confirmés par l’entreprise."

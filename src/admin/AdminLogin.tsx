@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { useAuth } from './AuthContext'
 import { ApiError } from '../lib/api'
 import { Alert, Spinner } from '../components/ui'
-import { LogoMark } from '../components/Logo'
 import { Field, TextInput } from '../components/forms/Field'
 
 export default function AdminLogin() {
@@ -34,12 +33,19 @@ export default function AdminLogin() {
     <div className="flex min-h-screen flex-col bg-navy-950">
       <div className="flex flex-1 items-center justify-center px-5 py-12">
         <div className="w-full max-w-md">
-          <div className="mb-8 flex items-center gap-3">
-            <LogoMark />
-            <div>
-              <p className="font-display text-lg font-bold text-white">BRILLE GROUP</p>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-400">Administration</p>
+          <div className="mb-8 flex flex-col items-center gap-4">
+            <div className="rounded-2xl bg-white px-6 py-4 shadow-lift">
+              <img
+                src="/images/logo-brille-group.svg"
+                alt="BRILLE GROUP SARL"
+                className="h-16 w-auto"
+                width={460}
+                height={240}
+              />
             </div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-azure-300">
+              Espace administration
+            </p>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white p-7 shadow-lift sm:p-8">

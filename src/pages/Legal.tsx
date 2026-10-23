@@ -29,7 +29,7 @@ export function MentionsLegales() {
         description="Mentions légales du site de BRILLE GROUP SARL : éditeur, immatriculation, hébergement, propriété intellectuelle et responsabilité."
         path="/mentions-legales"
       />
-      <PageHero eyebrow="Informations légales" title="Mentions légales" description="Informations relatives à l’éditeur du site et aux conditions d’utilisation." />
+      <PageHero logo eyebrow="Informations légales" title="Mentions légales" description="Informations relatives à l’éditeur du site et aux conditions d’utilisation." />
 
       <Section>
         <div className="max-w-3xl">
@@ -119,6 +119,7 @@ export function Confidentialite() {
         path="/politique-confidentialite"
       />
       <PageHero
+        logo
         eyebrow="Vos données"
         title="Politique de confidentialité"
         description="Cette page décrit quelles données sont collectées lorsque vous utilisez ce site, pourquoi et comment elles sont protégées."

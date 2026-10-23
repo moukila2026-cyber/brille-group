@@ -27,16 +27,37 @@ export function SiteProvider({ children }: { children: ReactNode }) {
     const controller = new AbortController()
     setLoading(true)
     setError(null)
-    api
-      .get<PublicSiteData>('/api/public/site', controller.signal)
-      .then((result) => setData(result))
-      .catch((err: unknown) => {
+
+    /**
+     * Message toujours lisible : on ne laisse jamais remonter un objet brut
+     * (« [object Object] ») à l'écran.
+     */
+    const messageLisible = (err: unknown): string => {
+      if (typeof err === 'string') return err
+      if (err instanceof Error && err.message) return err.message
+      return 'Le contenu du site n’a pas pu être actualisé.'
+    }
+
+    /** Deux tentatives : la première requête réveille parfois une base en veille. */
+    const charger = async (tentative: number): Promise<void> => {
+      try {
+        const result = await api.get<PublicSiteData>('/api/public/site', controller.signal)
+        if (!controller.signal.aborted) setData(result)
+      } catch (err) {
         if (controller.signal.aborted) return
-        setError(err instanceof Error ? err.message : 'Chargement impossible.')
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setLoading(false)
-      })
+        if (tentative < 2) {
+          window.setTimeout(() => {
+            if (!controller.signal.aborted) void charger(tentative + 1)
+          }, 1200)
+          return
+        }
+        setError(messageLisible(err))
+      } finally {
+        if (tentative >= 2 && !controller.signal.aborted) setLoading(false)
+      }
+    }
+
+    void charger(1)
     return () => controller.abort()
   }, [tick])
 

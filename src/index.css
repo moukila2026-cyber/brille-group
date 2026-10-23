@@ -31,11 +31,11 @@
 
   /* Focus visible : accessible au clavier, discret à la souris. */
   :focus-visible {
-    @apply outline-none ring-2 ring-gold-400 ring-offset-2 ring-offset-white;
+    @apply outline-none ring-2 ring-azure-500 ring-offset-2 ring-offset-white;
   }
 
   ::selection {
-    @apply bg-gold-200 text-navy-900;
+    @apply bg-azure-100 text-navy-900;
   }
 }
 
@@ -53,8 +53,10 @@
     @apply btn bg-navy-900 text-white shadow-sm hover:bg-navy-800 hover:shadow-lift active:scale-[.99];
   }
 
+  /* Bouton d'accent : dégradé de la charte (rouge → bleu du logo). */
   .btn-gold {
-    @apply btn bg-gold-400 text-navy-950 shadow-sm hover:bg-gold-300 hover:shadow-lift active:scale-[.99];
+    @apply btn bg-gradient-to-r from-brandred to-azure-600 text-white shadow-md shadow-brandred/25
+           hover:brightness-110 hover:shadow-lift active:scale-[.99];
   }
 
   .btn-outline {
@@ -92,7 +94,7 @@
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-gold-600;
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-azure-700;
   }
 
   .prose-brille p {
@@ -108,9 +110,9 @@
   }
 }
 
-/* Ligne dorée décorative utilisée sous les titres de section. */
+/* Filet décoratif utilisé sous les titres : dégradé rouge → bleu du logo. */
 .rule-gold {
-  background-image: linear-gradient(90deg, #d6a945 0%, #ecd9a2 60%, transparent 100%);
+  background-image: linear-gradient(90deg, #ee1f3a 0%, #ee1f3a 45%, #1e90de 70%, rgba(30, 144, 222, 0.15) 100%);
   height: 3px;
   width: 72px;
   border-radius: 999px;
@@ -125,5 +127,113 @@
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Effets et ornements — identité BRILLE GROUP (rouge / bleu de charte) */
+/* ------------------------------------------------------------------ */
+
+@layer utilities {
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  .bg-grid-light {
+    background-image:
+      linear-gradient(to right, rgba(13, 26, 45, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(13, 26, 45, 0.05) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .text-gradient-brand {
+    background-image: linear-gradient(100deg, #ffffff 0%, #d9f0fd 42%, #f9b9c2 78%, #ffffff 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-pan 14s ease infinite;
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(14px);
+  }
+
+  .glass-dark {
+    background: rgba(8, 17, 31, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(16px);
+  }
+
+  /* Bordure dégradée : carte premium */
+  .ring-brand {
+    box-shadow:
+      0 0 0 1px rgba(30, 144, 222, 0.16),
+      0 18px 48px -22px rgba(13, 26, 45, 0.5);
+  }
+
+  .hover-lift {
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 26px 60px -28px rgba(13, 26, 45, 0.55);
+  }
+
+  /* Filet dégradé rouge → bleu sous les titres */
+  .rule-brand {
+    height: 4px;
+    width: 84px;
+    border-radius: 999px;
+    background-image: linear-gradient(90deg, #ee1f3a 0%, #ee1f3a 45%, #1e90de 60%, #1e90de 100%);
+  }
+
+  .mask-fade-r {
+    -webkit-mask-image: linear-gradient(to right, #000 70%, transparent 100%);
+    mask-image: linear-gradient(to right, #000 70%, transparent 100%);
+  }
+
+  .clip-diagonal {
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 42px), 0 100%);
+  }
+}
+
+/* Apparition au défilement — activée uniquement si JavaScript tourne :
+   sans JS (ou si l'observateur échoue), tout le contenu reste visible. */
+html.js-reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+html.js-reveal [data-reveal].is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js-reveal [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .text-gradient-brand,
+  .animate-float,
+  .animate-shine,
+  .animate-pulse-ring {
+    animation: none !important;
   }
 }

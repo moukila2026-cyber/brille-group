@@ -125,7 +125,7 @@ export function ServiceHero({
   image: string
 }) {
   return (
-    <PageHero eyebrow={eyebrow} title={title} description={description} image={image}>
+    <PageHero logo eyebrow={eyebrow} title={title} description={description} image={image}>
       <Link to="/devis" className="btn-gold">
         Demander un devis
       </Link>

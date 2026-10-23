@@ -45,6 +45,7 @@ export default function Contact() {
         }}
       />
       <PageHero
+        logo
         eyebrow="Contact"
         title="Parlons de votre projet"
         description="Par téléphone, par e-mail ou via le formulaire : notre équipe vous répond et vous oriente vers le bon service."

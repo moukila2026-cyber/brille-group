@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 240" width="460" height="240">
+  <path d="M 25 148 A 205 100 0 0 1 435 148" fill="none" stroke="#EE1F3A" stroke-width="15" stroke-linecap="round"/>
+  <path d="M 47 144 A 183 82 0 0 1 413 144" fill="none" stroke="#1E90DE" stroke-width="13" stroke-linecap="round"/>
+  <path d="M 25 148 A 205 100 0 0 0 64 211" fill="none" stroke="#EE1F3A" stroke-width="15" stroke-linecap="round"/>
+  <path d="M 435 148 A 205 100 0 0 1 396 211" fill="none" stroke="#EE1F3A" stroke-width="15" stroke-linecap="round"/>
+  <path d="M 47 144 A 183 82 0 0 0 80 203" fill="none" stroke="#1E90DE" stroke-width="13" stroke-linecap="round"/>
+  <path d="M 413 144 A 183 82 0 0 1 380 203" fill="none" stroke="#1E90DE" stroke-width="13" stroke-linecap="round"/>
+  <rect x="1.6" y="90" width="456.8" height="58" rx="29" fill="#fff" stroke="#1E90DE" stroke-width="2.8"/>
+  <text x="230" y="133.5" text-anchor="middle" font-family="Segoe UI, system-ui, sans-serif" font-size="46" font-weight="800" letter-spacing="0.5" fill="#EE1F3A">BRILLE GROUP</text>
+  <rect x="58" y="154" width="344" height="36" rx="18" fill="#1E90DE"/>
+  <text x="230" y="178.5" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="19" font-style="italic" font-weight="600" fill="#fff">Let’s shine together</text>
+</svg>

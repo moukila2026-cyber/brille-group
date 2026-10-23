@@ -16,6 +16,7 @@ export default function Services() {
         path="/services"
       />
       <PageHero
+        logo
         eyebrow="Nos activités"
         title="Des services intégrés, du terrain au bâtiment"
         description="BRILLE GROUP SARL réunit six pôles de services complémentaires. Chaque page détaille les prestations proposées et permet de demander un devis adapté."
