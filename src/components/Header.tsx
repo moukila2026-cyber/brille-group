@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { Logo, LogoMark } from './Logo'
+import { servicePath } from '../lib/default-site-data'
 import { useSite } from '../lib/site-context'
-import { telHref, cn } from '../lib/format'
+import { telHref, whatsappHref, cn } from '../lib/format'
 
 const NAV = [
   { label: 'Accueil', to: '/' },
@@ -17,7 +18,7 @@ const NAV = [
 export function Header() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [servicesOpen, setServicesOpen] = useState(false)
-  const { coreServices, settings } = useSite()
+  const { coreServices, settings, capabilities } = useSite()
   const location = useLocation()
   const servicesRef = useRef<HTMLDivElement>(null)
 
@@ -55,6 +56,10 @@ export function Header() {
 
   const phone = typeof settings.phone_primary === 'string' ? settings.phone_primary : ''
   const email = typeof settings.email_primary === 'string' ? settings.email_primary : ''
+  const wa = whatsappHref(
+    typeof settings.whatsapp_number === 'string' ? settings.whatsapp_number : '',
+    'Bonjour BRILLE GROUP, je souhaite des informations.',
+  )
 
   const navLinkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -77,16 +82,26 @@ export function Header() {
         <div className="container-page flex h-10 items-center justify-between text-xs">
           <p className="flex items-center gap-2">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-gold-400" aria-hidden="true" />
-            Tazibouo · Région de Daloa · Côte d’Ivoire
+            Daloa (Tazibouo) · Intervention partout en Côte d’Ivoire
           </p>
           <div className="flex items-center gap-5">
             {phone ? (
               <a href={telHref(phone)} className="transition hover:text-white">
-                {phone}
+                Bureau : {phone}
+              </a>
+            ) : null}
+            {wa && capabilities.whatsappConfigured ? (
+              <a
+                href={wa}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-emerald-300 transition hover:text-emerald-200"
+              >
+                WhatsApp : 07 49 63 47 26
               </a>
             ) : null}
             {email ? (
-              <a href={`mailto:${email}`} className="hidden transition hover:text-white md:inline">
+              <a href={`mailto:${email}`} className="hidden transition hover:text-white xl:inline">
                 {email}
               </a>
             ) : null}
@@ -138,7 +153,7 @@ export function Header() {
                         {coreServices.map((service) => (
                           <Link
                             key={service.id}
-                            to={`/services/${service.slug}`}
+                            to={servicePath(service.slug)}
                             className="rounded-xl px-3 py-2.5 text-sm text-navy-700 transition hover:bg-navy-50 hover:text-navy-900"
                           >
                             {service.title}
@@ -219,7 +234,7 @@ export function Header() {
               <ul className="mt-2 space-y-1">
                 {coreServices.map((service) => (
                   <li key={service.id}>
-                    <Link to={`/services/${service.slug}`} className="block rounded-xl px-4 py-2.5 text-sm text-navy-700 hover:bg-navy-50">
+                    <Link to={servicePath(service.slug)} className="block rounded-xl px-4 py-2.5 text-sm text-navy-700 hover:bg-navy-50">
                       {service.title}
                     </Link>
                   </li>

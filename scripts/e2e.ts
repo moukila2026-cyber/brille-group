@@ -164,7 +164,24 @@ async function main() {
     'Aucun service non publié n’est exposé',
     (site.body?.services ?? []).every((s) => s.isPublished),
   )
-  ok('Aucun numéro WhatsApp inventé', site.body?.capabilities?.whatsappConfigured === false)
+  ok(
+    'Le numéro WhatsApp officiel confirmé (+225 07 49 63 47 26) est actif et distinct du fixe',
+    site.body?.capabilities?.whatsappConfigured === true &&
+      String(site.body?.settings?.whatsapp_number ?? '').replace(/\D/g, '') === '2250749634726',
+    site.body?.settings?.whatsapp_number,
+  )
+  ok('La galerie de réalisations signale au moins un projet confirmé', site.body?.capabilities?.hasProjects === true)
+
+  const projects = await call<{ projects: Array<{ title: string; coverImage: string | null }> }>(
+    'GET',
+    '/api/public/projects',
+  )
+  ok(
+    'La réalisation confirmée (cité résidentielle) est publiée sans fausse photo d’illustration',
+    projects.status === 200 &&
+      projects.body.projects.some((p) => /cité/i.test(p.title) && p.coverImage === null),
+    projects.body?.projects,
+  )
 
   const noAuthAdmin = await call('GET', '/api/admin/quotes')
   ok('Un visiteur anonyme ne peut pas lire les demandes (401)', noAuthAdmin.status === 401, noAuthAdmin.status)
@@ -397,7 +414,18 @@ async function main() {
   ok('L’accès aux demandes est refusé après déconnexion (401)', afterLogout.status === 401, afterLogout.status)
 
   section('Pages publiques servies par le front')
-  for (const path of ['/', '/a-propos', '/services', '/btp-construction', '/immobilier', '/formation', '/contact', '/devis']) {
+  for (const path of [
+    '/',
+    '/a-propos',
+    '/services',
+    '/btp-construction',
+    '/nettoyage-professionnel',
+    '/realisations',
+    '/immobilier',
+    '/formation',
+    '/contact',
+    '/devis',
+  ]) {
     const response = await fetch(`${BASE}${path}`)
     ok(`La page ${path} répond 200`, response.status === 200, response.status)
   }

@@ -3,19 +3,43 @@ import { api, ApiError } from '../../lib/api'
 import { Alert, Spinner } from '../ui'
 import { Consent, Field, Honeypot, Select, TextArea, TextInput } from './Field'
 
-const LOCAUX = ['Bureaux / local professionnel', 'Maison / logement', 'Local commercial', 'Chantier (après travaux)', 'Autre']
+const PRESTATIONS_SELECT = [
+  'Nettoyage & désinfection de maison / bureau / magasin / grande surface',
+  'Dératisation, désinsectisation, désinfection & désodorisation (3D / 4D)',
+  'Nettoyage & désinfection de fauteuils / canapés',
+  'Nettoyage & désinfection de moquettes ou tapis',
+  'Nettoyage & désinfection de matelas / punaises de lit',
+  'Nettoyage de fin de chantier / avant aménagement / après rénovation',
+  'Nettoyage et ponçage du marbre',
+  'Nettoyage de baies vitrées / façades et plafonds',
+  'Nettoyage d’intérieur de voiture',
+  'Plusieurs prestations combinées',
+]
+
+const LOCAUX = [
+  'Maison / résidence',
+  'Bureaux / entreprise',
+  'Magasin / supermarché / grande surface',
+  'Restaurant / hôtel',
+  'Entrepôt / local industriel',
+  'Chantier (fin de travaux / rénovation)',
+  'Véhicule (intérieur de voiture)',
+  'Autre',
+]
+
 const FREQUENCES = ['Une seule fois', 'Hebdomadaire', 'Deux fois par mois', 'Mensuelle', 'À définir']
 
 /**
- * Formulaire dédié au nettoyage : les informations spécifiques (type de local,
- * surface, fréquence, date) sont consolidées dans la description de la demande
- * de devis, ce qui garantit un seul circuit de traitement côté administration.
+ * Formulaire dédié au nettoyage & hygiène 3D : les informations spécifiques
+ * (prestation, type de local, surface, fréquence, date) sont consolidées dans
+ * la description de la demande de devis pour un traitement unifié côté admin.
  */
 export function CleaningForm() {
   const [form, setForm] = useState({
     full_name: '',
     phone: '',
     email: '',
+    prestation: PRESTATIONS_SELECT[0],
     local_type: LOCAUX[0],
     location: '',
     area: '',
@@ -53,8 +77,9 @@ export function CleaningForm() {
     if (Object.keys(next).length > 0) return
 
     const description = [
-      `Type de local : ${form.local_type}`,
-      form.area ? `Surface approximative : ${form.area} m²` : null,
+      `Prestation souhaitée : ${form.prestation}`,
+      `Type de lieu : ${form.local_type}`,
+      form.area ? `Surface / quantité approximative : ${form.area}` : null,
       `Fréquence souhaitée : ${form.frequency}`,
       form.desired_date ? `Date souhaitée : ${form.desired_date}` : null,
       form.description.trim() ? `\nPrécisions : ${form.description.trim()}` : null,
@@ -83,6 +108,7 @@ export function CleaningForm() {
         full_name: '',
         phone: '',
         email: '',
+        prestation: PRESTATIONS_SELECT[0],
         local_type: LOCAUX[0],
         location: '',
         area: '',
@@ -131,7 +157,7 @@ export function CleaningForm() {
   return (
     <form onSubmit={onSubmit} noValidate className="card relative p-6 sm:p-8">
       <Honeypot value={form.company_website} onChange={(value) => set('company_website', value)} />
-      <h2 className="text-xl font-semibold">Devis nettoyage</h2>
+      <h2 className="text-xl font-semibold">Devis nettoyage & hygiène 3D</h2>
       <p className="mt-2 text-sm text-navy-600">Quelques précisions suffisent pour recevoir une proposition adaptée.</p>
 
       {globalError ? (
@@ -150,16 +176,35 @@ export function CleaningForm() {
             onChange={(event) => set('full_name', event.target.value)}
           />
         </Field>
-        <Field label="Téléphone" htmlFor="clean-phone" required error={errors.phone}>
+        <Field label="Téléphone / WhatsApp" htmlFor="clean-phone" required error={errors.phone}>
           <TextInput
             id="clean-phone"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
+            placeholder="Ex. 07 XX XX XX XX"
             value={form.phone}
             invalid={Boolean(errors.phone)}
             onChange={(event) => set('phone', event.target.value)}
           />
+        </Field>
+        <Field label="Prestation souhaitée" htmlFor="clean-prestation" className="sm:col-span-2" required>
+          <Select id="clean-prestation" value={form.prestation} onChange={(event) => set('prestation', event.target.value)}>
+            {PRESTATIONS_SELECT.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </Select>
+        </Field>
+        <Field label="Type de lieu" htmlFor="clean-type" required>
+          <Select id="clean-type" value={form.local_type} onChange={(event) => set('local_type', event.target.value)}>
+            {LOCAUX.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </Select>
         </Field>
         <Field label="Adresse e-mail" htmlFor="clean-email" error={errors.email}>
           <TextInput
@@ -172,27 +217,17 @@ export function CleaningForm() {
             onChange={(event) => set('email', event.target.value)}
           />
         </Field>
-        <Field label="Type de local" htmlFor="clean-type" required>
-          <Select id="clean-type" value={form.local_type} onChange={(event) => set('local_type', event.target.value)}>
-            {LOCAUX.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </Select>
-        </Field>
-        <Field label="Localisation" htmlFor="clean-location" hint="Ville, quartier.">
+        <Field label="Localisation" htmlFor="clean-location" hint="Daloa ou toute autre ville en Côte d’Ivoire.">
           <TextInput
             id="clean-location"
             value={form.location}
             onChange={(event) => set('location', event.target.value)}
-            placeholder="Ex. Daloa, Tazibouo"
+            placeholder="Ex. Daloa, Abidjan, Yamoussoukro…"
           />
         </Field>
-        <Field label="Surface approximative" htmlFor="clean-area" hint="En m², si vous la connaissez.">
+        <Field label="Surface ou quantité" htmlFor="clean-area" hint="Ex. 120 m², salon 7 places, 2 matelas…">
           <TextInput
             id="clean-area"
-            inputMode="numeric"
             value={form.area}
             onChange={(event) => set('area', event.target.value)}
           />
@@ -214,7 +249,12 @@ export function CleaningForm() {
             onChange={(event) => set('desired_date', event.target.value)}
           />
         </Field>
-        <Field label="Précisions" htmlFor="clean-description" className="sm:col-span-2" hint="État des lieux, horaires d’accès, contraintes particulières.">
+        <Field
+          label="Précisions"
+          htmlFor="clean-description"
+          className="sm:col-span-2"
+          hint="Nuisibles constatés, état des lieux, horaires d’accès, contraintes particulières."
+        >
           <TextArea
             id="clean-description"
             value={form.description}

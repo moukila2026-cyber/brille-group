@@ -53,10 +53,10 @@ export const SERVICE_TYPE_OPTIONS = [
   { value: 'amenagement_foncier', label: 'Aménagement foncier' },
   { value: 'construction_btp', label: 'Construction / BTP' },
   { value: 'topographie', label: 'Topographie' },
-  { value: 'immobilier_terrain', label: 'Immobilier / terrain' },
+  { value: 'immobilier_terrain', label: 'Immobilier / vente de terrains' },
   { value: 'conseils', label: 'Conseils' },
   { value: 'formation', label: 'Formation' },
-  { value: 'nettoyage', label: 'Nettoyage professionnel' },
+  { value: 'nettoyage', label: 'Nettoyage industriel & Hygiène 3D (dératisation, désinfection…)' },
   { value: 'autre', label: 'Autre' },
 ] as const
 

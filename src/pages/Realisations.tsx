@@ -4,10 +4,11 @@ import { Seo } from '../components/Seo'
 import { Icon } from '../components/Icon'
 import { ProjectCard } from '../components/cards'
 import { EmptyState, PageHero, Section, SectionHeading, Spinner } from '../components/ui'
+import { DEFAULT_PROJECTS } from '../lib/default-site-data'
 import { useApiQuery } from '../lib/hooks'
 import { useSite } from '../lib/site-context'
 import { PROJECT_CATEGORY_LABELS, type ProjectCategory, type ProjectDTO } from '../lib/types'
-import { cn } from '../lib/format'
+import { cn, whatsappHref } from '../lib/format'
 
 const FILTERS: Array<{ value: ProjectCategory | 'tous'; label: string }> = [
   { value: 'tous', label: 'Tous les projets' },
@@ -21,38 +22,52 @@ const FILTERS: Array<{ value: ProjectCategory | 'tous'; label: string }> = [
 
 export default function Realisations() {
   const [filter, setFilter] = useState<ProjectCategory | 'tous'>('tous')
-  const { data, loading, error } = useApiQuery<{ projects: ProjectDTO[] }>('/api/public/projects')
-  const { capabilities } = useSite()
+  const { data, loading } = useApiQuery<{ projects: ProjectDTO[] }>('/api/public/projects')
+  const { capabilities, settings } = useSite()
+
+  const baseList = useMemo(() => {
+    if (data && data.projects.length > 0) return data.projects
+    return capabilities.hasProjects ? DEFAULT_PROJECTS : []
+  }, [data, capabilities.hasProjects])
 
   const projects = useMemo(() => {
-    const list = data?.projects ?? []
-    return filter === 'tous' ? list : list.filter((project) => project.category === filter)
-  }, [data, filter])
+    return filter === 'tous' ? baseList : baseList.filter((project) => project.category === filter)
+  }, [baseList, filter])
+
+  const wa = whatsappHref(
+    typeof settings.whatsapp_number === 'string' ? settings.whatsapp_number : '',
+    'Bonjour BRILLE GROUP, je souhaite échanger au sujet d’un projet de construction.',
+  )
 
   return (
     <>
       <Seo
-        title="Nos réalisations et projets"
-        description="Galerie des projets et réalisations de BRILLE GROUP SARL : construction, aménagement foncier, topographie, immobilier et nettoyage. Chaque projet est publié après validation de l’entreprise."
+        title="Nos réalisations et projets — BRILLE GROUP SARL"
+        description="Projets déjà réalisés par BRILLE GROUP SARL en Côte d’Ivoire : construction d’une cité résidentielle (2×3 pièces, 1×2 pièces et 6 studios) et chantiers BTP."
         path="/realisations"
       />
       <PageHero
         logo
         eyebrow="Nos réalisations"
-        title="Nos projets, documentés et validés"
-        description="Cette galerie ne contient que des projets réellement réalisés par l’entreprise et autorisés à la publication. Aucune image d’illustration n’y est présentée comme un chantier livré."
+        title="Nos projets déjà réalisés"
+        description="Cette page présente uniquement les réalisations réellement exécutées et confirmées par BRILLE GROUP SARL. Aucune image d’illustration n’est présentée comme photographie de chantier."
         image="/images/btp-construction.jpg"
       >
         <Link to="/devis" className="btn-gold">
           Parler de mon projet
         </Link>
+        {wa && capabilities.whatsappConfigured ? (
+          <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-ghost-light">
+            WhatsApp · 07 49 63 47 26
+          </a>
+        ) : null}
       </PageHero>
 
       <Section>
         <SectionHeading
-          eyebrow="Galerie"
+          eyebrow="Références"
           title="Filtrer par domaine"
-          description="Sélectionnez une catégorie pour afficher les projets correspondants."
+          description="Sélectionnez une catégorie pour afficher les réalisations correspondantes."
         />
 
         <div className="mt-8 flex flex-wrap gap-2" role="tablist" aria-label="Filtrer les réalisations par catégorie">
@@ -76,20 +91,14 @@ export default function Realisations() {
         </div>
 
         <div className="mt-8">
-          {loading ? (
+          {loading && baseList.length === 0 ? (
             <div className="flex justify-center py-16 text-navy-400">
               <Spinner />
             </div>
-          ) : error ? (
-            <EmptyState title="Chargement impossible" description={error} action={{ label: 'Réessayer', to: '/realisations' }} />
           ) : projects.length === 0 ? (
             <EmptyState
-              title={capabilities.hasProjects ? 'Aucun projet dans cette catégorie' : 'Galerie en préparation'}
-              description={
-                capabilities.hasProjects
-                  ? 'Aucun projet publié ne correspond à ce filtre pour le moment. Essayez une autre catégorie.'
-                  : 'Les réalisations seront publiées ici au fur et à mesure de leur documentation et de l’accord de l’entreprise. Nous préférons une galerie vide à des références inventées.'
-              }
+              title="Aucun projet publié dans cette catégorie"
+              description="Aucune réalisation publiée ne correspond à ce filtre pour le moment. Consultez « Tous les projets » ou « Construction » pour voir nos réalisations publiées."
               action={{ label: 'Demander des références', to: '/contact' }}
               icon={<Icon name="building" className="h-7 w-7" />}
             />
@@ -108,7 +117,8 @@ export default function Realisations() {
           <div>
             <h2 className="text-xl font-semibold sm:text-2xl">Votre projet pourrait être le prochain</h2>
             <p className="mt-2 max-w-xl text-sm text-navy-600">
-              Décrivez votre besoin : nous vous indiquons ce qui est réalisable et sous quelles conditions.
+              Décrivez votre besoin : nous vous indiquons ce qui est réalisable et sous quelles conditions, à Daloa
+              comme partout en Côte d’Ivoire.
             </p>
           </div>
           <Link to="/devis" className="btn-primary shrink-0">

@@ -9,9 +9,12 @@ import { telHref, whatsappHref } from '../lib/format'
 export default function Contact() {
   const { settings, capabilities } = useSite()
 
-  const phones = [settings.phone_primary, settings.phone_secondary, settings.phone_third].filter(
-    (value): value is string => typeof value === 'string' && value.trim() !== '',
-  )
+  const phoneEntries = [
+    { label: 'Bureau', value: settings.phone_primary },
+    { label: 'WhatsApp', value: settings.phone_secondary },
+    { label: 'Sercom', value: settings.phone_third },
+  ].filter((entry): entry is { label: string; value: string } => typeof entry.value === 'string' && entry.value.trim() !== '')
+  const phones = phoneEntries.map((entry) => entry.value)
   const email = String(settings.email_primary ?? '')
   const facebook = String(settings.facebook_url ?? '')
   const address = [settings.address_line, settings.city, settings.country]
@@ -64,13 +67,16 @@ export default function Contact() {
                     <Icon name="phone" className="h-5 w-5" />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-navy-400">Téléphone</p>
-                    {phones.length > 0 ? (
-                      <ul className="mt-1 space-y-1">
-                        {phones.map((phone) => (
-                          <li key={phone}>
-                            <a href={telHref(phone)} className="text-[15px] font-medium text-navy-900 hover:text-gold-700">
-                              {phone}
+                    <p className="text-xs font-semibold uppercase tracking-wider text-navy-400">Téléphones & WhatsApp</p>
+                    {phoneEntries.length > 0 ? (
+                      <ul className="mt-1.5 space-y-1.5">
+                        {phoneEntries.map((entry) => (
+                          <li key={entry.value} className="flex flex-wrap items-center gap-x-2 text-[15px]">
+                            <span className="text-xs font-semibold uppercase tracking-wide text-navy-500">
+                              {entry.label} :
+                            </span>
+                            <a href={telHref(entry.value)} className="font-medium text-navy-900 hover:text-gold-700">
+                              {entry.value}
                             </a>
                           </li>
                         ))}

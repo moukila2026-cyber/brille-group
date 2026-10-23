@@ -11,8 +11,8 @@ type RevealProps = {
 
 /**
  * Fait apparaître son contenu à l'entrée dans la fenêtre.
- * Sans JavaScript, ou si l'utilisateur a réduit les animations, le contenu
- * reste immédiatement visible : aucun texte ne peut être perdu.
+ * Sans JavaScript, sur petit écran, ou si l'observateur tarde, un filet de
+ * sécurité rend toujours l'élément visible : aucun contenu ne peut rester masqué.
  */
 export function Reveal({ children, className, delay = 0, as = 'div' }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null)
@@ -29,21 +29,30 @@ export function Reveal({ children, className, delay = 0, as = 'div' }: RevealPro
       return
     }
 
+    const revealNow = () => {
+      window.setTimeout(() => node.classList.add('is-visible'), delay)
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            const target = entry.target as HTMLElement
-            window.setTimeout(() => target.classList.add('is-visible'), delay)
-            observer.unobserve(target)
+            revealNow()
+            observer.unobserve(entry.target)
           }
         }
       },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.12 },
+      { rootMargin: '0px 0px -20px 0px', threshold: 0.02 },
     )
 
     observer.observe(node)
-    return () => observer.disconnect()
+    // Filet de sécurité : garantit qu'aucune carte de service ne reste jamais invisible.
+    const safetyTimer = window.setTimeout(() => node.classList.add('is-visible'), 1200 + delay)
+
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(safetyTimer)
+    }
   }, [delay])
 
   const Tag = as as 'div'

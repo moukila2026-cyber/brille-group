@@ -4,7 +4,7 @@ import { Icon } from '../components/Icon'
 import { PageHero, Section } from '../components/ui'
 import { QuoteForm } from '../components/forms/QuoteForm'
 import { useSite } from '../lib/site-context'
-import { telHref } from '../lib/format'
+import { telHref, whatsappHref } from '../lib/format'
 
 const STEPS = [
   { title: 'Vous décrivez', text: 'Votre besoin, la localisation et le délai souhaité, en quelques lignes.' },
@@ -15,9 +15,13 @@ const STEPS = [
 
 export default function Devis() {
   const [params] = useSearchParams()
-  const { settings } = useSite()
+  const { settings, capabilities } = useSite()
   const service = params.get('service') ?? 'autre'
   const phone = String(settings.phone_primary ?? '')
+  const wa = whatsappHref(
+    typeof settings.whatsapp_number === 'string' ? settings.whatsapp_number : '',
+    'Bonjour BRILLE GROUP, je souhaite demander un devis.',
+  )
 
   return (
     <>
@@ -66,14 +70,20 @@ export default function Devis() {
               </div>
 
               <div className="card p-6">
-                <h2 className="text-base font-semibold">Vous préférez appeler ?</h2>
+                <h2 className="text-base font-semibold">Vous préférez appeler ou écrire sur WhatsApp ?</h2>
                 <p className="mt-2 text-sm text-navy-600">
-                  C’est souvent plus rapide pour un premier échange. Nous sommes joignables aux heures ouvrables.
+                  C’est souvent plus rapide pour un premier échange. Nous intervenons à Daloa et partout en Côte
+                  d’Ivoire.
                 </p>
                 {phone ? (
                   <a href={telHref(phone)} className="btn-primary mt-4 w-full">
                     <Icon name="phone" className="h-4 w-4" />
-                    {phone}
+                    Bureau : {phone}
+                  </a>
+                ) : null}
+                {wa && capabilities.whatsappConfigured ? (
+                  <a href={wa} target="_blank" rel="noopener noreferrer" className="btn-outline mt-2 w-full">
+                    WhatsApp : 07 49 63 47 26
                   </a>
                 ) : null}
               </div>
