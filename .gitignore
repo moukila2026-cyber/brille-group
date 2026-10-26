@@ -25,3 +25,6 @@ test-results
 *.tsbuildinfo
 .sudo_as_admin_successful
 uploads/
+
+# Fiche PDF (générée)
+flyer/.build/
